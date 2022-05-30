@@ -1,10 +1,15 @@
+import io from 'socket.io-client';
 import React from 'react';
 import Square from './Square';
 
-function Board(props) { 
+const socket = io("localhost:3001");
+
+function Board() {
+
     const [board, setBoard] = React.useState({
         squares: Array(9).fill(null),
         xIsNext: true,
+        newGame: false,
     });
 
     const handleClick = (i) => {
@@ -19,6 +24,14 @@ function Board(props) {
         });
     };
     
+    const restartGame = () => {
+        setBoard({
+            squares: Array(9).fill(null),
+            xIsNext: true,
+            newGame: true,
+        });
+    };
+
     const renderSquare = (i) => {
         return (
             <Square
@@ -53,6 +66,9 @@ function Board(props) {
                 {renderSquare(6)}
                 {renderSquare(7)}
                 {renderSquare(8)}
+            </div>
+            <div className="restart-button">
+                <button onClick={restartGame}>Restart</button>
             </div>
         </div>
     )
