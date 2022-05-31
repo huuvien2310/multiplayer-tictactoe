@@ -18,12 +18,12 @@ class SocketService {
         return socket.rooms;
     }
 
-    static updateBoard(newSquares, xIsNext, newGame, room) {
+    static updateBoard(newSquares, xIsNext, newGame) {
         socket.emit("update-board", {
             squares: newSquares,
             xIsNext: xIsNext,
             newGame: newGame,
-        }, room);
+        });
     }
 
     static onUpdateBoard(listener) {
@@ -35,7 +35,6 @@ class SocketService {
     }
     
     static joinRoom(roomId) {
-        console.log(roomId);
         socket.emit("join-room", roomId);
     }
 }

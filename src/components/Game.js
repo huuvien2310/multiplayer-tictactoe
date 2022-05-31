@@ -1,29 +1,8 @@
 import React from 'react';
 import Board from './Board';
 import './Components.css';
-// import io from "socket.io-client";
-// import { useParams } from 'react-router-dom';
 
-// const socket = io("localhost:3001");
-
-function Game(props) {
-    // const {roomId} = useParams();
-    // const [isConnected, setIsConnected] = React.useState(socket.connected);
-
-    // React.useEffect(() => {
-    //     socket.on("connect", () => {
-    //         setIsConnected(true);
-    //     });
-    //     socket.on("disconnect", () => {
-    //         setIsConnected(false);
-    //     });
-
-    //     return () => {
-    //         socket.off("connect");
-    //         socket.off("disconnect");
-    //     }
-    // }, [roomId]);
-
+function Game() {
     return (
         <div>
             <div className="game">

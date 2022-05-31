@@ -12,7 +12,7 @@ const io = new Server(httpServer, {
 
 const getSocketGameRoom = socket => {
     const socketRooms = Array.from(socket.rooms.values()).filter(
-      (r) => r !== socket.id
+      (room) => room !== socket.id
     );
     const gameRoom = socketRooms && socketRooms[0];
 
@@ -27,13 +27,8 @@ io.on('connection', socket => {
     });
     socket.on('join-room', room => {
         socket.join(room);
-        io.emit('on-join-room', room);
-        // console.log(getSocketGameRoom(socket));
     });
-    // socket.on('in-room', roomId => {
-    //     // console.log(socket.rooms)
-    // });
-    socket.on('update-board', (board, roomId) => {
+    socket.on('update-board', board => {
         const room = getSocketGameRoom(socket);
         io.in(room).emit('on-update-board', board);
     });

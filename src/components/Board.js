@@ -1,19 +1,13 @@
-import io from 'socket.io-client';
 import React from 'react';
 import Square from './Square';
 import socketService from '../services/socketService';
 
-const socket = io("localhost:3001");
-
 function Board() {
-
     const [board, setBoard] = React.useState({
         squares: Array(9).fill(null),
         xIsNext: true,
         newGame: false,
     });
-
-    const [room, setRoom] = React.useState('');
 
     const handleClick = (i) => {
         const squares = board.squares.slice();
@@ -28,12 +22,7 @@ function Board() {
         });
         const newSquares = [...squares];
         const xIsNext = !board.xIsNext;
-        // socket.emit('update-board', {
-        //     squares: newSquares,
-        //     xIsNext: xIsNext,
-        //     newGame: false,
-        // }, room);
-        socketService.updateBoard(newSquares, xIsNext, false, room);
+        socketService.updateBoard(newSquares, xIsNext, false);
     };
     
     const restartGame = () => {
@@ -57,13 +46,8 @@ function Board() {
         socketService.onUpdateBoard((newBoard) => {
             setBoard(newBoard);
         });
-        socket.on('on-join-room', (roomId) => {
-            setRoom(roomId);
-            socket.emit('in-room', roomId);
-        });
         return () => {
             socketService.offUpdateBoard();
-            socket.off('on-join-room');
         };
     }, [board, board.squares]);
 
