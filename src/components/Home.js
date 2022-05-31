@@ -1,13 +1,19 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import socketService from '../services/socketService';
 
 function Home() {
     const [room, setRoom] = React.useState('');
 
     const handleChange = (e) => {
-        setRoom(e.target.value);
-    }
+        setRoom(e.target.value);    
+    };
     
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        socketService.joinRoom(room);
+    };
+
     return (
         <div className="container">
             <div className="row">
@@ -25,11 +31,11 @@ function Home() {
                                     onChange={handleChange}
                                 />
                             </div>
-                            <Link to={`/${room}`}>
-                                <button className="btn btn-primary btn-block btn-lg">
+                            <button onClick={handleSubmit}>
+                                <Link to={`/${room}`}>
                                     Enter
-                                </button>
-                            </Link>
+                                </Link>
+                            </button>
                         </form>
                     </div>
                 </div>

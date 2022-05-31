@@ -10,30 +10,32 @@ const io = new Server(httpServer, {
     },
 });
 
+const getSocketGameRoom = socket => {
+    const socketRooms = Array.from(socket.rooms.values()).filter(
+      (r) => r !== socket.id
+    );
+    const gameRoom = socketRooms && socketRooms[0];
+
+    return gameRoom;
+}
+
 io.on('connection', socket => {
     console.log(`connect: ${socket.id}`);
-
-    socket.on('hello!', () => {
-        console.log(`hello from ${socket.id}`);
-    });
 
     socket.on('disconnect', () => {
         console.log(`disconnect: ${socket.id}`);
     });
-    socket.on('create or join', room => {
-      console.log('Received request to create or join room', room);
-      const myRoom = io.sockets.adapter.rooms[room];
-      const numClients = myRoom ? myRoom.length : 0;
-      if (numClients === 0) {
+    socket.on('join-room', room => {
         socket.join(room);
-        socket.emit('created', room);
-      } else if (numClients === 1) {
-        io.sockets.in(room).emit('join', room);
-        socket.join(room);
-        socket.emit('joined', room);
-      } else {
-        socket.emit('full', room);
-      }
+        io.emit('on-join-room', room);
+        // console.log(getSocketGameRoom(socket));
+    });
+    // socket.on('in-room', roomId => {
+    //     // console.log(socket.rooms)
+    // });
+    socket.on('update-board', (board, roomId) => {
+        const room = getSocketGameRoom(socket);
+        io.in(room).emit('on-update-board', board);
     });
 });
 

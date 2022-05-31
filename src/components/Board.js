@@ -1,6 +1,7 @@
 import io from 'socket.io-client';
 import React from 'react';
 import Square from './Square';
+import socketService from '../services/socketService';
 
 const socket = io("localhost:3001");
 
@@ -12,6 +13,8 @@ function Board() {
         newGame: false,
     });
 
+    const [room, setRoom] = React.useState('');
+
     const handleClick = (i) => {
         const squares = board.squares.slice();
         if (calculateWinner(squares) || squares[i]) {
@@ -21,7 +24,16 @@ function Board() {
         setBoard({
             squares: squares,
             xIsNext: !board.xIsNext,
+            newGame: false,
         });
+        const newSquares = [...squares];
+        const xIsNext = !board.xIsNext;
+        // socket.emit('update-board', {
+        //     squares: newSquares,
+        //     xIsNext: xIsNext,
+        //     newGame: false,
+        // }, room);
+        socketService.updateBoard(newSquares, xIsNext, false, room);
     };
     
     const restartGame = () => {
@@ -40,6 +52,20 @@ function Board() {
             />
         );
     };
+
+    React.useEffect(() => {
+        socketService.onUpdateBoard((newBoard) => {
+            setBoard(newBoard);
+        });
+        socket.on('on-join-room', (roomId) => {
+            setRoom(roomId);
+            socket.emit('in-room', roomId);
+        });
+        return () => {
+            socketService.offUpdateBoard();
+            socket.off('on-join-room');
+        };
+    }, [board, board.squares]);
 
     const winner = calculateWinner(board.squares);
     let status;
